@@ -111,10 +111,7 @@ export default function Header() {
               <div className="z-[1]">
                 <LocaleSwitcher />
               </div>
-              <button
-                className="relative"
-                onClick={() => router.push(`${header}/cart`)}
-              >
+              <button className="relative" onClick={() => router.push(`/cart`)}>
                 <div>
                   <BiBasket size={35} color={"white"} />
                 </div>
