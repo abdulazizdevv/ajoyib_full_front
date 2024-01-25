@@ -1,5 +1,5 @@
 import Link from "next/link";
-import React, { useState } from "react";
+import React, { useEffect, useState } from "react";
 
 import bgImage from "../../assets/images/main_bg.jpg";
 import tomato from "../../assets/images/tomato.png";
@@ -12,10 +12,12 @@ import { Offcanvas } from "@/components/Drawer/Drawer";
 import { RiMenu3Fill } from "react-icons/ri";
 import { usePathname, useRouter } from "next/navigation";
 import { BiBasket, BiSolidBasket } from "react-icons/bi";
+import { LiaAngleUpSolid } from "react-icons/lia";
 import useProductStore from "@/app/[lang]/cart/store";
 
 export default function Header() {
-  const [modal, setModal] = useState(false);
+  const [modal, setModal] = useState<boolean>(false);
+  const [showBackToTop, setShowBackToTop] = useState<boolean>(false);
   const { cartItems } = useProductStore();
   const { dictionary, header } = useSetStore();
   const router = useRouter();
@@ -23,8 +25,31 @@ export default function Header() {
   const hashIndex = path.indexOf("#");
   const section = hashIndex !== -1 ? path.slice(hashIndex + 1) : null;
 
+  useEffect(() => {
+    const handleScroll = () => {
+      const scrollY = window.scrollY;
+      const threshold = 150;
+
+      if (scrollY > threshold) {
+        setShowBackToTop(true);
+      } else {
+        setShowBackToTop(false);
+      }
+    };
+    window.addEventListener("scroll", handleScroll);
+    return () => {
+      window.removeEventListener("scroll", handleScroll);
+    };
+  }, []);
   return (
     <div className="sticky top-0 z-10 ">
+      {showBackToTop && (
+        <div className="fixed bottom-[30px] border border-mainColor bg-bgColor p-3 rounded-full right-[30px] z-[9999]">
+          <Link href="/" >
+            <LiaAngleUpSolid size={24} color="#a93535" />
+          </Link>
+        </div>
+      )}
       <div
         style={{
           backgroundImage: `url(${bgImage.src})`,
