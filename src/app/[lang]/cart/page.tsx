@@ -68,20 +68,23 @@ export default function Cart({
     fetchDataAndDictionary();
   }, [lang, fetchData, updateDictionary, updateHeader]);
 
-  const increment = (productId: any) => {
-    setCounts((prevCounts) => ({
-      ...prevCounts,
-      [productId]: (prevCounts[productId] || 0) + 1,
-    }));
+  const increment = (productId: number) => {
+    setCounts((prevCounts) => {
+      return {
+        ...prevCounts,
+        [productId]: prevCounts[productId] ? prevCounts[productId] + 1 : 1,
+      };
+    });
   };
 
-  const decrement = (productId: any) => {
-    if (counts[productId] > 1) {
-      setCounts((prevCounts) => ({
+  const decrement = (productId: number) => {
+    setCounts((prevCounts) => {
+      return {
         ...prevCounts,
-        [productId]: prevCounts[productId] - 1,
-      }));
-    }
+        [productId]:
+          prevCounts[productId] - 1 > 0 ? prevCounts[productId] - 1 : 0,
+      };
+    });
   };
 
   useEffect(() => {
