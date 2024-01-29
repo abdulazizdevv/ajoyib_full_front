@@ -6,8 +6,7 @@ import { i18n } from "../../../i18n.config";
 import Layout from "@/layout/Layout";
 import { Suspense } from "react";
 import Loading from "@/components/Loading/Loading";
-import 'react-toastify/dist/ReactToastify.css';
-
+import "react-toastify/dist/ReactToastify.css";
 
 const inter = Inter({ subsets: ["latin"] });
 
@@ -29,6 +28,10 @@ export default function RootLayout({
 }) {
   return (
     <html lang={params.lang}>
+      <Head>
+        <meta charSet="utf-8" />
+        <meta name="viewport" content="width=device-width, initial-scale=1" />
+      </Head>
       <body className={inter.className}>
         <Suspense fallback={<Loading />}>
           <Layout>{children}</Layout>
