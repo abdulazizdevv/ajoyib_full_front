@@ -7,8 +7,6 @@ import { useSetStore } from "@/redux/store";
 import butter from "../../assets/icons/butter.png";
 import burger from "../../assets/icons/burger.png";
 import Card from "../Card/Card";
-import Link from "next/link";
-import useProductStore from "@/app/[lang]/cart/store";
 import Loading from "../Loading/Loading";
 
 export default function Menu() {

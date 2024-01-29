@@ -6,6 +6,8 @@ import { i18n } from "../../../i18n.config";
 import Layout from "@/layout/Layout";
 import { Suspense } from "react";
 import Loading from "@/components/Loading/Loading";
+import 'react-toastify/dist/ReactToastify.css';
+
 
 const inter = Inter({ subsets: ["latin"] });
 

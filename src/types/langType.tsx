@@ -31,6 +31,11 @@ export type Translations = {
   cartH: string;
   basket: string;
   cartCount: string;
+  order: string;
+  name: string;
+  location: string;
+  target: string;
+  successSend: string;
 };
 
 export interface IProduct {

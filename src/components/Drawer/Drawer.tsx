@@ -1,5 +1,4 @@
 import React, { useEffect, useRef, useState } from "react";
-// import { GrClose } from "react-icons/gr";
 import { MdClose } from "react-icons/md";
 import "./Drawer.css";
 import Image from "next/image";

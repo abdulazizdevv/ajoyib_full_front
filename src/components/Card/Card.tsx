@@ -1,6 +1,5 @@
 import Image from "next/image";
 import React, { useEffect, useState } from "react";
-import { IoMdHeart, IoMdHeartEmpty } from "react-icons/io";
 import { BiBasket } from "react-icons/bi";
 import { IProduct } from "@/types/langType";
 import { baseURL } from "@/api/api";

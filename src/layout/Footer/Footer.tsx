@@ -32,11 +32,10 @@ export default function Footer() {
               height={0}
               alt="logo"
             />
-
             <div className="flex items-center gap-3 mb-3">
               <IoLocationOutline size={24} color={"white"} />
-              <p className="text-white font-bold">
-                Manzil: Uzbekiston Andijon, Xonobod
+              <p className="text-white font-bold max-w-[350px]">
+                {dictionary?.target}
               </p>
             </div>
             <Link

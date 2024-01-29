@@ -1,17 +1,20 @@
 "use client";
-import Loading from "@/components/Loading/Loading";
-import React, { useCallback, useEffect, useState } from "react";
-import img from "@/assets/images/lavash.png";
+import React, { FormEvent, useCallback, useEffect, useState } from "react";
 import Image from "next/image";
 import { FaRegTrashAlt } from "react-icons/fa";
 import useProductStore from "./store";
 import { IProduct } from "@/types/langType";
-import axiosInstance, { baseURL } from "@/api/api";
+import { baseURL } from "@/api/api";
 import { Locale } from "../../../../i18n.config";
 import { getDictionary } from "@/lib/Dictionary";
 import { useSetStore } from "@/redux/store";
 import Link from "next/link";
+import { MdOutlineBookmarkBorder } from "react-icons/md";
 import { MdClose } from "react-icons/md";
+import { Modal } from "@/components/Modal/Modal";
+import "./form.css";
+import { sendTelegramMessage } from "@/api/message";
+import { ToastContainer, toast } from "react-toastify";
 
 export default function Cart({
   params: { lang },
@@ -22,13 +25,18 @@ export default function Cart({
   const { updateDictionary, updateHeader, dictionary } = useSetStore();
 
   const [loading, setLoading] = useState(false);
+  const [modal, setModal] = useState(false);
   const [price, setPrice] = useState<number>(0);
   const [count, setCount] = useState<number>(0);
-
   const [data, setData] = useState<IProduct[]>();
   const [cards, setCards] = useState<any>([]);
-
   const [counts, setCounts] = useState<{ [key: string]: number }>({});
+
+  const [order, setOrder] = useState({
+    name: "",
+    phone: "",
+    location: "",
+  });
 
   const fetchData = useCallback(async () => {
     const fetchPromises = cartItems.map((i: any) =>
@@ -116,8 +124,53 @@ export default function Cart({
     setCards([]);
   };
 
+  const handleSubmit = (e: FormEvent) => {
+    e.preventDefault();
+
+    const botToken = "6938344599:AAEmO30auw7K_wtCTlmb-02jKyG1jqPWvj4";
+    const chatId = "-1002024780566";
+    let totalPrice = 0;
+    let message = ``;
+    console.log(order);
+
+    if (!order.name || !order.phone || !order.location) {
+      return toast.error("Iltimos formani to'ldiring");
+    }
+
+    message += ` Ismi: ${order.name}\nTelefon raqami: ${order.phone}\nManzili: ${order.location}\n\n`;
+
+    data?.forEach((product: any) => {
+      const count = counts[product.id] || 1;
+      const productPrice = count * product.price;
+      totalPrice += productPrice;
+      message += `Mahsulot: ${product.title} ${count} ta \nNarxi: ${productPrice} so'm\n\n`;
+    });
+
+    message += `Umumiy narxi: ${totalPrice} so'm`;
+
+    sendTelegramMessage({ botToken, chatId, message })
+      .then((success) => {
+        if (success) {
+          toast.success(dictionary?.successSend);
+          setOrder((prevOrder) => ({
+            ...prevOrder,
+            name: "",
+            phone: "",
+            location: "",
+          }));
+          setModal(false);
+        } else {
+          toast.error("Empty");
+        }
+      })
+      .catch((error) => {
+        console.error("Error:", error);
+      });
+  };
+
   return (
     <section className="py-[20px] md:py-[85px]">
+      <ToastContainer />
       <div>
         {cartItems.length <= 0 ? (
           <div className="flex flex-col items-center justify-center">
@@ -217,7 +270,7 @@ export default function Cart({
                                   </div>
                                   <button
                                     onClick={() => deleteCart(el.id)}
-                                    className="text-mainColor"
+                                    className="text-mainColor hover:-translate-y-3.5	duration-300"
                                   >
                                     <FaRegTrashAlt size={30} />
                                   </button>
@@ -231,7 +284,7 @@ export default function Cart({
                     </div>
                   </>
                 </div>
-                <div className="w-full md:w-[80%]">
+                <div className="w-full lg:w-[80%]">
                   <div className="border border-mainColor flex flex-col gap-3 rounded-md p-5">
                     <h3 className="font-bold text-[35px]">
                       {dictionary?.cartH}
@@ -242,18 +295,102 @@ export default function Cart({
                     <p className="text-[30px] font-bold">
                       {dictionary?.allPrice}: {price} so'm
                     </p>
-                    <button
-                      onClick={deleteAllItems}
-                      className="text-white bg-mainColor text-center font-bold text-[20px] p-3 rounded-md items-center flex  gap-3 "
-                    >
-                      <MdClose size={25} /> {dictionary?.allDelete}
-                    </button>
+                    <div className="flex gap-3 lg:flex-nowrap flex-wrap">
+                      <button
+                        onClick={() => setModal(true)}
+                        className="text-white w-full bg-[green] text-center font-bold text-[20px] p-3 rounded-md items-center flex  gap-3 "
+                      >
+                        <MdOutlineBookmarkBorder size={24} />{" "}
+                        {dictionary?.order}
+                      </button>
+                      <button
+                        onClick={deleteAllItems}
+                        className="text-white w-full bg-mainColor text-center font-bold text-[20px] p-3 rounded-md items-center flex  gap-3 "
+                      >
+                        <MdClose size={25} /> {dictionary?.allDelete}
+                      </button>
+                    </div>
                   </div>
                 </div>
               </div>
             </div>
           </>
         )}
+        <Modal setModal={setModal} modal={modal} title={dictionary?.order}>
+          <div className="container">
+            <div className=" all">
+              <div className="login_form">
+                <form onSubmit={handleSubmit} className="form mt-5">
+                  <div className="form_div  ">
+                    <input
+                      type="text "
+                      className="form_input "
+                      placeholder=" "
+                      onChange={(e) => {
+                        setOrder((prevOrder) => ({
+                          ...prevOrder,
+                          name: e.target.value,
+                        }));
+                      }}
+                      value={order.name}
+                    />
+                    <label htmlFor="" className="form_label">
+                      {dictionary?.name}
+                    </label>
+                  </div>
+
+                  <div className="form_div">
+                    <input
+                      type="tel"
+                      className="form_input"
+                      placeholder=" "
+                      maxLength={13}
+                      onChange={(e) => {
+                        const input = e.target.value;
+                        const phoneNumber = input.replace(/[^\d+]/g, ""); // Remove non-numeric characters except '+'
+                        setOrder((prevOrder) => ({
+                          ...prevOrder,
+                          phone: phoneNumber,
+                        }));
+                      }}
+                      value={order.phone}
+                    />
+                    <label htmlFor="" className="form_label">
+                      +998 xx xxx xx xx
+                    </label>
+                  </div>
+                  <div className="form_div">
+                    {/* <input type="tex"  placeholder=" "> */}
+                    <textarea
+                      name="text"
+                      className="form_textarea"
+                      id="text"
+                      rows={4}
+                      cols={50}
+                      placeholder=" "
+                      onChange={(e) => {
+                        setOrder((prevOrder) => ({
+                          ...prevOrder,
+                          location: e.target.value,
+                        }));
+                      }}
+                      value={order.location}
+                    />
+                    <span className="form_label">{dictionary?.location} </span>
+                  </div>
+                  <div className="text-end">
+                    <button
+                      type="submit"
+                      className="bg-mainColor text-white p-2 px-5 mt-8 rounded-md  "
+                    >
+                      Send
+                    </button>
+                  </div>
+                </form>
+              </div>
+            </div>
+          </div>
+        </Modal>
       </div>
     </section>
   );
