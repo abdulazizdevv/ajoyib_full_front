@@ -30,6 +30,7 @@ export default function RootLayout({
     <html lang={params.lang}>
       <Head>
         <meta charSet="utf-8" />
+        <meta name="theme-color" content="#F4F1EA" />
         <meta name="viewport" content="width=device-width, initial-scale=1" />
       </Head>
       <body className={inter.className}>

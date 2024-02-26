@@ -11,6 +11,7 @@ import Layout from "@/layout/Layout";
 import Hero from "@/components/Hero/Hero";
 import Menu from "@/components/Menu/Menu";
 import Loading from "@/components/Loading/Loading";
+import SEO from "@/components/SEO/SEO";
 
 export default function Home({
   params: { lang },
@@ -37,6 +38,7 @@ export default function Home({
         <Loading />
       ) : (
         <>
+          <SEO />
           <Hero />
           <About />
           <Menu />

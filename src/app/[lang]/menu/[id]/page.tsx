@@ -10,6 +10,7 @@ import { Locale } from "../../../../../i18n.config";
 import axiosInstance, { baseURL } from "@/api/api";
 import { IProduct } from "@/types/langType";
 import Loading from "@/components/Loading/Loading";
+import SEO from "@/components/SEO/SEO";
 
 export default function Menu({
   params: { lang, id },
@@ -49,6 +50,7 @@ export default function Menu({
 
   return (
     <section>
+      <SEO />
       {loading ? (
         <Loading />
       ) : (
